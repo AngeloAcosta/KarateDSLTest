@@ -4,7 +4,7 @@ Feature: Testing Sign Up Feature
         * def dataGenerator = Java.type('helpers.DataGenerator')
         * def randomEmail = dataGenerator.getRandomEmail()
         * def randomUsername = dataGenerator.getRandomUsername()
-        Given url apiUrl
+        * url apiUrl
 
     Scenario: Creating User
 
@@ -33,7 +33,6 @@ Feature: Testing Sign Up Feature
             """
 
 
-    @debug
     Scenario Outline: Validate Sign Up error messages
 
         Given path 'users'

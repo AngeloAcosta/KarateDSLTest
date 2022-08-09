@@ -21,5 +21,8 @@ function fn() {
   var accessToken = karate.callSingle('classpath:helpers/CreateToken.feature',config).authToken
   karate.configure('headers', {Authorization: 'Token ' + accessToken})
 
+  // Pasamos la variable de Username
+  config.userUsername = karate.callSingle('classpath:helpers/CreateToken.feature',config).username
+
   return config;
 }

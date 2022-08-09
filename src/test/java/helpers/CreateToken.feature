@@ -7,3 +7,4 @@ Feature: Create Token
         When method POST
         Then status 200
         * def authToken = response.user.token
+        * def username = response.user.username
