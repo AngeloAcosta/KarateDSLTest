@@ -1,7 +1,7 @@
 Feature: Test for the home page
 
     Background: Define URL
-    * url apiUrl
+        * url apiUrl
 
     Scenario: Get all tags
 
@@ -14,7 +14,7 @@ Feature: Test for the home page
         And match response.tags == "#array"
         And match each response.tags == "#string"
 
-    Scenario: Get 3 articles from 
+    Scenario: Get 3 articles from Page
 
         * def timeValidator = read('classpath:helpers/timeValidator.js')
 
@@ -23,23 +23,52 @@ Feature: Test for the home page
         When method GET
         Then status 200
         And match response.articles == '#[3]'
-        And match each response.articles == 
-        """
+        And match each response.articles ==
+            """
             {
-                "slug": "#string",
-                "title": "#string",
-                "description": "#string",
-                "body": "#string",
-                "tagList": "#array",
-                "createdAt": "#? timeValidator(_)",
-                "updatedAt": "#? timeValidator(_)",
-                "favorited": '#boolean',
-                "favoritesCount": '#number',
-                "author": {
-                    "username": "#string",
-                    "bio": ##string,
-                    "image": "#string",
-                    "following": '#boolean'
-                }
+            "slug": "#string",
+            "title": "#string",
+            "description": "#string",
+            "body": "#string",
+            "tagList": "#array",
+            "createdAt": "#? timeValidator(_)",
+            "updatedAt": "#? timeValidator(_)",
+            "favorited": '#boolean',
+            "favoritesCount": '#number',
+            "author": {
+            "username": "#string",
+            "bio": ##string,
+            "image": "#string",
+            "following": '#boolean'
             }
-        """
+            }
+            """
+
+    Scenario: Conditional Logic
+        Given params { limit : 10, offset: 0 }
+        Given path 'articles'
+        When method GET
+        Then status 200
+        * print response
+        * def favoritesCount = response.articles[0].favoritesCount
+        * def article = response.articles[0]
+
+        * if (favoritesCount == 0) karate.call('classpath:helpers/AddLikes.feature', article)
+
+        Given params { limit : 10, offset: 10 }
+        Given path 'articles'
+        When method GET
+        Then status 200
+        And match response.articles[0].favoritesCount == 1
+
+@debug
+
+    Scenario: Retry call
+
+    * configure retry = { attemps: 10, interval: 5000 }
+
+    Given params { limit : 10, offset: 0 }
+    Given path 'articles'
+    And retry until response.articles[0].favoritesCount == 1
+    When method GET
+    Then status 200

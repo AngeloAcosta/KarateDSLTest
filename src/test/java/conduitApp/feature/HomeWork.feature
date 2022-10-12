@@ -4,7 +4,6 @@ Feature: Homework
 
         * url apiUrl
 
-    @debug
     Scenario: Favorite Article (Homework #1)
         #Paso 1: Obtener los articulos del feed global
         Given path 'articles'
