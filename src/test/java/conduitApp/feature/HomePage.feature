@@ -61,14 +61,24 @@ Feature: Test for the home page
         Then status 200
         And match response.articles[0].favoritesCount == 1
 
-@debug
-
     Scenario: Retry call
 
-    * configure retry = { attemps: 10, interval: 5000 }
+        * configure retry = { attemps: 10, interval: 5000 }
 
-    Given params { limit : 10, offset: 0 }
-    Given path 'articles'
-    And retry until response.articles[0].favoritesCount == 1
-    When method GET
-    Then status 200
+        Given params { limit : 10, offset: 0 }
+        Given path 'articles'
+        And retry until response.articles[0].favoritesCount == 1
+        When method GET
+        Then status 200
+
+    @debug
+    ### HARD-CODING SLEEP FUCTION.
+    Scenario: Sleep call
+
+        * def sleep = function(pause) { java.lang.Thread.sleep(pause) }
+
+        Given params { limit : 10, offset: 0 }
+        Given path 'articles'
+        When method GET
+        * eval sleep(5000)
+        Then status 200
